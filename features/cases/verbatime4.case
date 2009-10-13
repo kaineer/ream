@@ -1,0 +1,11 @@
+[pre[
+first verbatime  line
+second  verbatime line
+]]
+---
+pre:
+  elt: pre
+  opt: "|<>"
+---
+<pre>first verbatime  line
+second  verbatime line</pre>

@@ -1,0 +1,8 @@
+[p[
+Between [b[bold]]
+[i[italics]] those must stay a space
+]]
+---
+# no config
+---
+<p>Between <b>bold</b> <i>italics</i> those must stay a space</p>

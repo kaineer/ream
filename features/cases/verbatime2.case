@@ -1,0 +1,13 @@
+[code[
+first verbatime  line
+second  vebatime line
+]]
+---
+code:
+  elt: pre
+  opt: "|"
+---
+<pre>
+first verbatime  line
+second  vebatime line
+</pre>

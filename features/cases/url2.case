@@ -1,0 +1,11 @@
+[a http://case.org[
+  [p[
+     paragraph
+  ]]
+]]
+---
+# no config
+#
+# Tags inside href
+---
+<a href="http://case.org"><p>paragraph</p></a>

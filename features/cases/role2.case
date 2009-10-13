@@ -1,0 +1,18 @@
+[chapter[
+[header[  First chapter header ]]
+[para[
+Paragraph
+]]
+]]
+---
+chapter:
+  elt: div
+  attr:
+    style: "background-color: red;"
+    class: chapter
+header:
+  elt: h2
+para:
+  elt: p
+---
+<div class="chapter" style="background-color: red;"><h2>First chapter header</h2> <p>Paragraph</p></div>

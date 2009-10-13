@@ -1,0 +1,6 @@
+[image
+  http://image.org/image.jpg[]]
+---
+# no config
+---
+<img src="http://image.org/image.jpg" alt="">

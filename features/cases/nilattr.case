@@ -1,0 +1,8 @@
+[hr]
+---
+hr:
+  elt: hr
+  attr:
+    noshade: ~
+---
+<hr noshade>

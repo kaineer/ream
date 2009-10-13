@@ -1,0 +1,10 @@
+[p[
+Begin, 
+[copyright],
+end.
+]]
+---
+copyright:
+  entity: copy
+---
+<p>Begin, &copy;, end.</p>
