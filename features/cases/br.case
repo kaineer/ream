@@ -1,7 +1,0 @@
-[p[
-Paragraph begin[br]Paragraph end
-]]
----
-# no config
----
-<p>Paragraph begin<br>Paragraph end</p>

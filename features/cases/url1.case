@@ -1,5 +1,0 @@
-[a http://case.org[text]]
----
-# no config
----
-<a href="http://case.org">text</a>

@@ -1,5 +1,0 @@
-[p[some text and [b[bold inside]] it]]
----
-# no config needed
----
-<p>some text and <b>bold inside</b> it</p>

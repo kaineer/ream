@@ -1,6 +1,0 @@
-[header[  this is a header ]]
----
-header:
-  elt: zyx
----
-<zyx>this is a header</zyx>

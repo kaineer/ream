@@ -1,5 +1,0 @@
-[p[some text with a <tag>]]
----
-# no config
----
-<p>some text with a &lt;tag&gt;</p>

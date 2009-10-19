@@ -1,5 +1,0 @@
-[p[this is a paragraph]]
----
-# :no config:
----
-<p>this is a paragraph</p>

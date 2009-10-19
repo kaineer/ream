@@ -1,7 +1,0 @@
-[h1[header]]
-[p[paragraph]]
----
-# no config
----
-<h1>header</h1>
-<p>paragraph</p>

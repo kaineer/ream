@@ -1,8 +1,0 @@
-[p[ 
-Some text    [/]
-, more text.
-]]
----
-# no config
----
-<p>Some text, more text.</p>
