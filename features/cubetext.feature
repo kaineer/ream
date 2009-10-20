@@ -2,7 +2,7 @@
 Feature: Cubetext markup
   As a blog designer
   I want have my own markup language
-  In order to have it my own
+  In order to have unlimited customization freedom
 
   Scenario Outline: Cubetext syntax, case <name>
     Given I have cubetext parser

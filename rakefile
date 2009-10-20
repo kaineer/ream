@@ -1,7 +1,9 @@
 require 'cucumber/rake/task'
 
 Cucumber::Rake::Task.new( "features" ) do |t|
+  t.cucumber_opts ||= ""
   t.cucumber_opts = "--tags #{ENV[ "CUCUMBER_TAGS" ]}" if ENV[ "CUCUMBER_TAGS" ]
+  t.cucumber_opts << " #{ENV[ "CUCUMBER_OPTS" ]}" if ENV[ "CUCUMBER_OPTS" ]
 end
 
 task :default => :features
