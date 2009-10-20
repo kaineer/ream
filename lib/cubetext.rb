@@ -34,107 +34,114 @@ class CubeText
   #
   #
   class Fragment
-      #
-      #
-      def initialize( obj )
-          unless obj.nil?
-              @role_name, @options = parse_name( obj )
-          end
-          @child = []
+    #
+    #
+    def initialize( obj )
+      unless obj.nil?
+        @role_name, @options = parse_name( obj )
+      end
+      @child = []
+    end
+
+    #
+    #
+    def root?
+      @role_name.nil?
+    end
+
+    #
+    #
+    def <<( obj )
+      case obj
+      when Fragment then @child << obj
+      when String then append_string( obj )
+      end
+    end
+
+    attr_reader :role_name
+    attr_reader :child
+    attr_reader :options
+    attr_reader :extra
+
+    protected
+    #
+    #
+    def parse_name( obj )
+      case obj
+      when String then name = obj
+      when Array  then name, @extra = obj
       end
 
-      #
-      #
-      def root?
-          @role_name.nil?
+      case name
+      when /^(\w+)(.*)$/ then [
+                               $~[1], CubeText::parse_options( $~[2] ) ]
+      else raise "Unknown fragment role: `#{name}'"
       end
+    end
 
-      #
-      #
-      def <<( obj )
-          case obj
-          when Fragment then @child << obj
-          when String then append_string( obj )
-          end
-      end
-
-      attr_reader :role_name
-      attr_reader :child
-      attr_reader :options
-      attr_reader :extra
-
-  protected
-      #
-      #
-      def parse_name( obj )
-          case obj
-          when String then name = obj
-          when Array  then name, @extra = obj
-          end
-
-          case name
-          when /^(\w+)(.*)$/ then [
-              $~[1], CubeText::parse_options( $~[2] ) ]
-          else raise "Unknown fragment role: `#{name}'"
-          end
-      end
-
-      #
-      #
-      def append_string( str )
-          ( @child.last.is_a?( String ) ? @child.last : @child ) << str
-      end
+    #
+    #
+    def append_string( str )
+      ( @child.last.is_a?( String ) ? @child.last : @child ) << str
+    end
   end
 
   #
   #
   #
-  class RootFragment
-      #
-      #
-      def initialize
-          super( nil )
-      end
+  class RootFragment < Fragment
+    #
+    #
+    def initialize
+      super( nil )
+    end
   end
 
   #
   #
   def initialize
-      @roles = {}
-      @fragment = nil
+    @roles = {}
+    @fragment = nil
+    @xml = false
+    @unquote = false
   end
+
+  # Set xml and unquote flags
+  #
+  def xml!; @xml = true; end
+  def unquote!; @unquote = true; end
 
   #
   #
   def parse( text )
-      text_tail = text.
-          gsub( /\s*\[(\/|skip)\]\s*\n\s*/ ) {''}
-      @fragment = Fragment.new( nil )
-      current_fragment = @fragment
-      stack = []
+    text_tail = text.
+      gsub( /\s*\[(\/|skip)\]\s*\n\s*/ ) {''}
+    @fragment = RootFragment.new # Fragment.new( nil )
+    current_fragment = @fragment
+    stack = []
 
-      until text_tail.empty?
-          event, lexem, text_tail = get_lexem( text_tail )
+    until text_tail.empty?
+      event, lexem, text_tail = get_lexem( text_tail )
 
-          case event
-          when LEXEM_FRAGMENT_BEGIN
-              new_fragment = Fragment.new( lexem ) # SMELL: duplication
-              current_fragment << new_fragment     #
+      case event
+      when LEXEM_FRAGMENT_BEGIN
+        new_fragment = Fragment.new( lexem ) # SMELL: duplication
+        current_fragment << new_fragment     #
 
-              stack << current_fragment
-              current_fragment = new_fragment
+        stack << current_fragment
+        current_fragment = new_fragment
 
-          when LEXEM_FRAGMENT_EMPTY
-              new_fragment = Fragment.new( lexem ) #
-              current_fragment << new_fragment     #
+      when LEXEM_FRAGMENT_EMPTY
+        new_fragment = Fragment.new( lexem ) #
+        current_fragment << new_fragment     #
 
-          when LEXEM_FRAGMENT_END
-              current_fragment = stack.pop
+      when LEXEM_FRAGMENT_END
+        current_fragment = stack.pop
 
-          when LEXEM_TEXT
-              current_fragment << lexem
-          end
+      when LEXEM_TEXT
+        current_fragment << lexem
       end
+    end
   end
 
   #
@@ -213,32 +220,39 @@ class CubeText
 protected
   #
   #
-	def get_lexem( text_tail )
-		case text_tail
-		when /\A\[(\w+[\<\>\|-]*)\[/m then [ LEXEM_FRAGMENT_BEGIN, $~[1], $' ]
-		when /\A\[(\w+[\<\>\|-]*)\s+([^\[\]]+)\[/m then [ LEXEM_FRAGMENT_BEGIN, [ $~[1], $~[2] ], $' ]
-		when /\A\]\]/m                then [ LEXEM_FRAGMENT_END,   nil,   $' ]
-		when /\A\[\[/m                then [ LEXEM_TEXT, '[', $' ]
-		when /\A\[\]/m                then [ LEXEM_TEXT, ']', $' ]
-		when /\A([^\[\]]+)/m          then [ LEXEM_TEXT, $~[1], $' ]
-		when /\A\[(\w+)\]/m           then [ LEXEM_FRAGMENT_EMPTY, $~[1], $' ]
-		when /\A\[(\w+)\s+([^\[\]]+)\]/m then [ LEXEM_FRAGMENT_EMPTY, [ $~[1], $~[2] ], $' ]
-		# TODO: Some more cases
-		#
-		else raise "Can't parse: `#{text_tail[0..40]}'"
-		end
-	end
+  def get_lexem( text_tail )
+    case text_tail
+    when /\A\[(\w+[\<\>\|-]*)\[/m then [ LEXEM_FRAGMENT_BEGIN, $~[1], $' ]
+    when /\A\[(\w+[\<\>\|-]*)\s+([^\[\]]+)\[/m then [ LEXEM_FRAGMENT_BEGIN, [ $~[1], $~[2] ], $' ]
+    when /\A\]\]/m                then [ LEXEM_FRAGMENT_END,   nil,   $' ]
+    when /\A\[\[/m                then [ LEXEM_TEXT, '[', $' ]
+    when /\A\[\]/m                then [ LEXEM_TEXT, ']', $' ]
+    when /\A([^\[\]]+)/m          then [ LEXEM_TEXT, $~[1], $' ]
+    when /\A\[(\w+)\]/m           then [ LEXEM_FRAGMENT_EMPTY, $~[1], $' ]
+    when /\A\[(\w+)\s+([^\[\]]+)\]/m then [ LEXEM_FRAGMENT_EMPTY, [ $~[1], $~[2] ], $' ]
+      # TODO: Some more cases
+      #
+    else raise "Can't parse: `#{text_tail[0..40]}'"
+    end
+  end
 
   # Text options
   # :begin - first child
   # :end   - last child
   #
 
+  #
+  #
+  def render_options
+    @render_options ||= 
+      [ ( @xml ? :xml : nil ),
+        ( @unquote ? :unquote : nil ) 
+      ].compact
+  end
 
   #
   #
   def to_html0( fragment )
-
     result = ""
     fragment.child.each_with_index do |obj, i|
       case obj
@@ -252,7 +266,7 @@ protected
 
         role = @roles[ fragment.role_name ]
         unless role.nil?
-            options |= role.options unless role.options.nil?
+          options |= role.options unless role.options.nil?
         end
 
         result  << normalize( obj, options ).gsub(/</){'&lt;'}.gsub(/>/){'&gt;'}
@@ -265,114 +279,131 @@ protected
     result
   end
 
-    #
-    # Warning: it changes str onplace!
-    def normalize( str, options )
-        unless options.include?( :verbatime )
-            str.gsub!( /\s+/m ){' '}
-            str.gsub!( /\A\s+/m ) {''} if options.include?( :first )
-            str.gsub!( /\s+\Z/m ) {''} if options.include?( :last )
+  #
+  # Warning: it changes str onplace!
+  def normalize( str, options )
+    unless options.include?( :verbatime )
+      str.gsub!( /\s+/m ){' '}
+      str.gsub!( /\A\s+/m ) {''} if options.include?( :first )
+      str.gsub!( /\s+\Z/m ) {''} if options.include?( :last )
+    else
+      str.gsub!( /\A\s*\n/m ) {''} if options.include?( :skip_first_empty_line )
+      str.gsub!( /\n\s*\Z/m ) {''} if options.include?( :skip_last_empty_line )
+    end
+
+    str
+  end
+
+  #
+  #
+  def start_tag( fragment )
+    role_name = fragment.role_name
+    role = @roles[ role_name ]
+
+    case
+    when (!role.nil? and role.owner_syntax?)
+      role.start_tag( fragment.extra )
+    when (!role.nil? and role.entity?)
+      "&#{role.element_name};"
+    else
+      "<" +
+        tag_name( fragment ) +
+        attr0( fragment ) +
+        ( @xml && role && !role.has_close_tag? ? "/" : "" ) +
+        ">"
+    end
+  end
+
+  #
+  #
+  def end_tag( fragment )
+    role_name = fragment.role_name
+    role = @roles[ role_name ]
+    case
+    when (!role.nil? and role.owner_syntax? and role.has_close_tag?)
+      role.close_tag( fragment.extra )
+    when (role.nil? or role.has_close_tag?)
+      "</" +
+        tag_name( fragment ) +
+        ">"
+    end.to_s
+  end
+
+  #
+  #
+  def tag_name( fragment )
+    role_name = fragment.role_name
+    return role_name if ( role = @roles[ role_name ] ).nil?
+    role.element_name
+  end
+
+  #
+  #
+  def attr0( fragment )
+    role = @roles[ fragment.role_name ]
+    case
+    when ( role.nil? or
+           role.attributes.nil? ) then ''
+    when ( role.uses_extra? and not
+           fragment.extra.nil? ) then role.extra_attr( fragment.extra, render_options )
+    else
+      attr = role.attributes
+      attr.keys.sort{|a,b|a<=>b}.collect do |k|
+        v = attr[k]
+        if k.downcase == "style" && v.is_a?( Array )
+          " #{k}=\"#{v.join(';')}\""
         else
-            str.gsub!( /\A\s*\n/m ) {''} if options.include?( :skip_first_empty_line )
-            str.gsub!( /\n\s*\Z/m ) {''} if options.include?( :skip_last_empty_line )
+          if v
+            " #{k}=#{attr_value0(v)}"
+          else
+            @xml ? " #{k}=\"#{k}\"" : " #{k}"
+          end
         end
+      end.join('')
+    end # case
+  end
 
-        str
+  #
+  #
+  def attr_value0( value )
+    raise "Can not handle xml and unquote modes together" if @xml && @unquote
+
+    if @unquote && /^(\d+|[a-zA-Z]+)$/ === value
+      value
+    else
+      "\"#{value}\""
+    end
+  end
+
+  ### Methods, added on refactoring
+
+  # Create new [+Role+] object,
+  # or reuse existing
+  #
+  def reuse_role_if_possible( name, &block )
+    unless @roles.has_key?( name )
+      @roles[ name ] = block.call()
+    end
+    @roles[ name ]
+  end
+
+  # Get element data from config hash,
+  #   and put it into role's object
+  #
+  def config_element_role( role, hash )
+    # Attributes data
+    #
+    attr = hash.first_value( %w( attribute attr ) )
+    unless attr.nil?
+      attr.each do |name, value|
+        role.attributes[ name ] = value
+      end
     end
 
+    # Options data
     #
     #
-    def start_tag( fragment )
-        role_name = fragment.role_name
-        role = @roles[ role_name ]
-
-        case
-        when (!role.nil? and role.owner_syntax?)
-            role.start_tag( fragment.extra )
-        when (!role.nil? and role.entity?)
-            "&#{role.element_name};"
-        else
-            "<" +
-            tag_name( fragment ) +
-            attr0( fragment ) +
-            ">"
-        end
-    end
-
-    #
-    #
-    def end_tag( fragment )
-        role_name = fragment.role_name
-        role = @roles[ role_name ]
-        case
-        when (!role.nil? and role.owner_syntax? and role.has_close_tag?)
-            role.close_tag( fragment.extra )
-        when (role.nil? or role.has_close_tag?)
-            "</" +
-            tag_name( fragment ) +
-            ">"
-        end.to_s
-    end
-
-    #
-    #
-    def tag_name( fragment )
-        role_name = fragment.role_name
-        return role_name if ( role = @roles[ role_name ] ).nil?
-        role.element_name
-    end
-
-    #
-    #
-    def attr0( fragment )
-        role = @roles[ fragment.role_name ]
-        case
-        when ( role.nil? or
-            role.attributes.nil? ) then ''
-        when ( role.uses_extra? and not
-            fragment.extra.nil? ) then role.extra_attr( fragment.extra )
-        else
-            attr = role.attributes
-            attr.keys.sort{|a,b|a<=>b}.collect do |k|
-                v = attr[k]
-                if k.downcase == "style" && v.is_a?( Array )
-                	" #{k}=\"#{v.join(';')}\""
-                else
-	                ( v.nil? ? " #{k}" : " #{k}=\"#{v}\"" )
-	            end
-            end.join('')
-        end # case
-    end
-
-    ### Methods, added on refactoring
-
-    # Create new [+Role+] object,
-    # or reuse existing
-    #
-    def reuse_role_if_possible( name, &block )
-        unless @roles.has_key?( name )
-            @roles[ name ] = block.call()
-        end
-        @roles[ name ]
-    end
-
-    # Get element data from config hash,
-    #   and put it into role's object
-    #
-    def config_element_role( role, hash )
-        # Attributes data
-        #
-        attr = hash.first_value( %w( attribute attr ) )
-        unless attr.nil?
-            attr.each do |name, value|
-                role.attributes[ name ] = value
-            end
-        end
-
-        # Options data
-        #
-        #
-        opt = hash.first_value( %w( options opt ) )
-        role.options ||= CubeText::parse_options( opt ) unless opt.nil?
-    end
+    opt = hash.first_value( %w( options opt ) )
+    role.options ||= CubeText::parse_options( opt ) unless opt.nil?
+  end
 end

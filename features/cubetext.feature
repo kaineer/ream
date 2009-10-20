@@ -4,9 +4,10 @@ Feature: Cubetext markup
   I want have my own markup language
   In order to have it my own
 
-  Scenario Outline: Case <name>
-    Given I have cubetext source <source>
+  Scenario Outline: Cubetext syntax, case <name>
+    Given I have cubetext parser
       And I have cubetext config <config>
+     When I feed cubetext source <source>
      Then cubetext result should be <result>
 
   Examples:
@@ -30,3 +31,31 @@ Feature: Cubetext markup
    | element attributes   | [chapter[[para[foo]]         | attributes | <div class="chapter"><p>foo</p></div>               |
    | skip spaces          | [p[begin     [skip]\n, end]] |            | <p>begin, end</p>                                   |
    | skip spaces, short   | [p[begin     [/]\n, end]]    |            | <p>begin, end</p>                                   |
+
+  @xml
+  Scenario Outline: XML flag, case <name>
+    Given I have cubetext parser
+      And I set cubetext parser to xml mode
+      And I have cubetext config <config>
+     When I feed cubetext source <source>
+     Then cubetext result should be <result>
+
+  Examples:
+   | name             | source      | config   | result                    |
+   | simple empty tag | [br]        |          | <br/>                     |
+   | attributes       | [img ./jpg] |          | <img src="./jpg" alt=""/> |
+   | non-empty tag    | [p]         |          | <p></p>                   |
+   | nil attribute    | [hr]        | nil_attr | <hr noshade="noshade"/>   |
+
+  @unquote
+  Scenario Outline: XML flag, case <name>
+    Given I have cubetext parser
+      And I set cubetext parser to unquote mode
+      And I have no cubetext config
+     When I feed cubetext source <source>
+     Then cubetext result should be <result>
+
+  Examples:
+   | name    | source               | result                                       |
+   | img tag | [img ./jpg (100x30)] | <img src="./jpg" alt="" width=100 height=30> |
+   | anchor  | [a {tag}]            | <a id=tag></a>                               |

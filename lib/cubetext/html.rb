@@ -21,14 +21,14 @@ class CubeText
     
     #
     #
-    def extra_attr( extra )
+    def extra_attr( extra, render_options )
       result = ""
       if /^([^\[\]\{\}]+)/ === extra
-        result << " href=\"#{$~[1]}\""
+        result << " href=#{attr_value0( $~[1], render_options )}"
       end
       
       if /\{(.*)\}/ === extra
-        result << " id=\"#{$~[1]}\""
+        result << " id=#{attr_value0( $~[1], render_options )}"
       end
       
       result
@@ -59,20 +59,20 @@ class CubeText
     
     #
     #
-    def extra_attr( extra )
+    def extra_attr( extra, render_options )
       result = ""
       if /^(\S+)/ === extra
-        result << " src=\"#{$~[1]}\""
+        result << " src=#{attr_value0( $~[1], render_options )}"
       end
       if /\"(.*)\"/ === extra # "
-        result << " alt=\"#{$~[1]}\""
+        result << " alt=#{attr_value0( $~[1], render_options )}"
       else
         result << " alt=\"\""
       end
       if /\((\d+)x(\d+)(\*(\d+))?\)/ === extra
-        result << " width=\"#{$~[1]}\""
-        result << " height=\"#{$~[2]}\""
-        result << " border=\"#{$~[4]}\"" unless $~[3].nil?
+        result << " width=#{attr_value0( $~[1], render_options )}"
+        result << " height=#{attr_value0( $~[2], render_options )}"
+        result << " border=#{attr_value0( $~[4], render_options )}" unless $~[3].nil?
       end
       
       result
