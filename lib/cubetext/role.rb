@@ -31,6 +31,21 @@ class CubeText
     attr_reader :element_name
     attr_reader :attributes
     attr_accessor :options
+
+  protected
+    #
+    def attr_value0( value, render_options )
+      @xml = render_options.include?( :xml )
+      @unquote = render_options.include?( :unquote )
+
+      raise "Can not handle xml and unquote modes together" if @xml && @unquote
+
+      if @unquote && /^(\d+|[a-zA-Z]+)$/ === value
+        value
+      else
+        "\"#{value}\""
+      end
+    end
   end
 
   #

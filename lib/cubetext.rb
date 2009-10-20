@@ -89,7 +89,7 @@ class CubeText
   #
   #
   #
-  class RootFragment
+  class RootFragment < Fragment
     #
     #
     def initialize
@@ -102,14 +102,21 @@ class CubeText
   def initialize
     @roles = {}
     @fragment = nil
+    @xml = false
+    @unquote = false
   end
+
+  # Set xml and unquote flags
+  #
+  def xml!; @xml = true; end
+  def unquote!; @unquote = true; end
 
   #
   #
   def parse( text )
     text_tail = text.
       gsub( /\s*\[(\/|skip)\]\s*\n\s*/ ) {''}
-    @fragment = Fragment.new( nil )
+    @fragment = RootFragment.new # Fragment.new( nil )
     current_fragment = @fragment
     stack = []
 
@@ -234,11 +241,18 @@ protected
   # :end   - last child
   #
 
+  #
+  #
+  def render_options
+    @render_options ||= 
+      [ ( @xml ? :xml : nil ),
+        ( @unquote ? :unquote : nil ) 
+      ].compact
+  end
 
   #
   #
   def to_html0( fragment )
-
     result = ""
     fragment.child.each_with_index do |obj, i|
       case obj
@@ -295,6 +309,7 @@ protected
       "<" +
         tag_name( fragment ) +
         attr0( fragment ) +
+        ( @xml && role && !role.has_close_tag? ? "/" : "" ) +
         ">"
     end
   end
@@ -330,7 +345,7 @@ protected
     when ( role.nil? or
            role.attributes.nil? ) then ''
     when ( role.uses_extra? and not
-           fragment.extra.nil? ) then role.extra_attr( fragment.extra )
+           fragment.extra.nil? ) then role.extra_attr( fragment.extra, render_options )
     else
       attr = role.attributes
       attr.keys.sort{|a,b|a<=>b}.collect do |k|
@@ -338,10 +353,26 @@ protected
         if k.downcase == "style" && v.is_a?( Array )
           " #{k}=\"#{v.join(';')}\""
         else
-          ( v.nil? ? " #{k}" : " #{k}=\"#{v}\"" )
+          if v
+            " #{k}=#{attr_value0(v)}"
+          else
+            @xml ? " #{k}=\"#{k}\"" : " #{k}"
+          end
         end
       end.join('')
     end # case
+  end
+
+  #
+  #
+  def attr_value0( value )
+    raise "Can not handle xml and unquote modes together" if @xml && @unquote
+
+    if @unquote && /^(\d+|[a-zA-Z]+)$/ === value
+      value
+    else
+      "\"#{value}\""
+    end
   end
 
   ### Methods, added on refactoring
