@@ -27,6 +27,6 @@ Feature: Cubetext markup
    | nil attribute        | [hr]                         | nil_attr   | <hr noshade>                                        |
    | normalizing          | [p[\nnormalize\n\nme!\n]]    |            | <p>normalize me!</p>                                |
    | header element       | [header[ this is a header ]] | header_elt | <h2>this is a header</h2>                           |
-   | element attributes   | [chapter[[para[foo]]         | attributes | <div class="chapter"><p>foo</p></div>               |
+   | element attributes   | [chapter]                    | attributes | <div class="chapter"></div>                         |
    | skip spaces          | [p[begin     [skip]\n, end]] |            | <p>begin, end</p>                                   |
    | skip spaces, short   | [p[begin     [/]\n, end]]    |            | <p>begin, end</p>                                   |

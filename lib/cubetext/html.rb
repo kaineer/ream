@@ -105,4 +105,3 @@ class CubeText
     @roles[ 'hr' ] = EmptyHtmlRole.new( 'hr' )
   end
 end
-

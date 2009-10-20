@@ -17,7 +17,7 @@ class CubeText
       "copyright"  => { "copyright" => { "entity" => "copy" } },
       "nil_attr"   => { "hr" => { "elt" => "hr", "attr" => { "noshade" => nil } } },
       "header_elt" => { "header" => { "elt" => "h2" } },
-      "attributes" => { "chapter" => { "elt" => "div", "attr" => { "class" => "chapter" } }, "para" => { "elt" => "p" } }
+      "attributes" => { "chapter" => { "elt" => "div", "attr" => { "class" => "chapter" } } }
     }[ tag ]
   end
 end
