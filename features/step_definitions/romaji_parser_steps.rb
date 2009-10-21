@@ -12,6 +12,10 @@ Then /^romaji parser can not parse (.*)$/ do |rest|
   assert_equal( rest, @result.str )
 end
 
+Then /^romaji parser has nothing unparsed$/ do
+  assert( @result.str.empty? )
+end
+
 Then /^romaji parser failure is (true|false)$/ do |failure|
   assert_equal( failure == "true", @result.failure? )
 end

@@ -10,6 +10,6 @@ require 'cubetext'
 
 class String
   def escape
-    self.gsub( "\\n" ){||$/}
+    self.gsub( "\\n" ){||$/}.gsub( "\\\"" ){||"\""}
   end
 end

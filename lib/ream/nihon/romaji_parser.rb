@@ -180,6 +180,10 @@ module Ream
       rule( /^F[AIEO]/ ) {|pr|
         pr << 'FU' << pr[ 1, 1 ].downcase >> 2
       }
+      
+      rule( /^FU/ ) {|pr|
+        pr << 'FU' >> 2
+      }
 
       # --- tsu on double consonant
       # C included for 'cchi'

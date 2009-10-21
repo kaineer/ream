@@ -1,4 +1,4 @@
-@romaji @kana
+@nihon @kana
 Feature: Kana text element
 
   Scenario Outline: Create hiragana with romaji <romaji>
