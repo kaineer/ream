@@ -3,66 +3,26 @@
 #
 
 require 'ream/nihon/kana'
-require 'ream/nihon/symbols'
 
 module Ream
   module Nihon
     class Text
-
-      class Block
+      class Kanji
         def initialize( data )
           @data = data
-        end
-        
-        def loc_name; self.class.name[ /\w+$/ ]; end
-        
-        def to_s
-          "%s(%s)" % [ loc_name, @data.join(',') ]
-        end
-      end
-      
-      class Katakana < Block 
-        def to_html
-          @data.map do |e|
-            Kana.entity( e, true )
-          end.join( '' )
-        end
-      end
-      class Hiragana < Block
-        def to_html
-          @data.map do |e|
-            Kana.entity( e, false )
-          end.join( '' )
-        end
-      end
-
-      class Kana < Block
-        def initialize( kana )
-          @kana = kana
-        end
-
-        def to_html
-          @kana.to_html
-        end
-
-        def to_s
-          @kana.inspect
-        end
-      end
-
-      class Kanji < Block
-        def initialize( data )
-          super( data )
           @furigana = nil
         end
-        
+
         attr_writer :furigana
-        
-        def to_s
-          return super if @furigana.nil?
-          "Kanji(#{@data.join(',')}:#{@furigana.to_s})"
+
+        def inspect
+          if @furigana.nil?
+            "Kanji(#{@data.join(',')})"
+          else
+            "Kanji(#{@data.join(',')}:#{@furigana.inspect})"
+          end
         end
-        
+
         def to_html
           if @furigana.nil?
             @data.map do |e|
@@ -77,39 +37,29 @@ module Ream
           end
         end
       end
-      class Dots < Block
-        def initialize( data )
-          super( data )
-        end
-        def to_s
-          "#{loc_name}(#{@data})"
-        end
-        def to_html
-          Symbols.translate( @data )
-        end
-      end
-      
+
       class CantParse < Exception
         def initialize( text )
           super( text )
         end
       end
-      
+
       def initialize( source )
         @parts = []
         hira = true
+
         while source.size > 0
           case source
-          when Symbols.keys
+          when Ream::Nihon::Dots::PATTERN
             text = $~[0]
             source = source[ (text.size)..-1 ]
-            @parts << Dots.new( text )
+            @parts << Ream::Nihon::Dots.new( text )
             hira = true
           when /^\w+/
             text = $~[0]
             source = source[ (text.size)..-1 ]
 
-            part = Kana.new( Ream::Nihon::Kana.new( text, !hira ) )
+            part = Ream::Nihon::Kana.new( text, !hira )
             @parts << part
           when /^\//
             hira = !hira
@@ -120,8 +70,8 @@ module Ream
             text = md[1]
             data = text.split(',')
             kanji = Kanji.new( data )
-            kanji.furigana = 
-              Kana.new( Ream::Nihon::Kana.new( md[ 4 ] ) ) unless md[4].nil?
+            kanji.furigana =
+              Ream::Nihon::Kana.new( md[ 4 ] ) unless md[4].nil?
             @parts << kanji
             hira = true
           else
@@ -129,11 +79,11 @@ module Ream
           end
         end
       end
-      
+
       def to_s
-        @parts.map{|e|e.to_s}.join(';')
+        @parts.map{|e|e.inspect}.join(';')
       end
-      
+
       def to_html
         @parts.map{|e|e.to_html}.join('')
       end
