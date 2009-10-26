@@ -88,6 +88,19 @@ module Ream
         @parts.map{|e|e.to_html}.join('')
       end
 
+      def self.scan( source )
+        arr = source.unpack( "U*" )
+        if arr.all?{|c| c < ?z}
+          kana = Ream::Nihon::Kana.try( source )
+          if kana.ok? && kana.rest.empty?
+            return :romaji
+          else
+            return :meaning
+          end
+        else
+          return Ream::Nihon::Kana.scan( source )
+        end
+      end
     end
   end
 end
