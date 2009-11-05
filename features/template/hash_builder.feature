@@ -27,4 +27,3 @@ Feature: Hash builder
       And I closed hash builder's key
       And I added to hash builder a line bark
      Then key foo from hash builder should be mew
-

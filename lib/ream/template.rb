@@ -24,12 +24,12 @@ tpl[ 'tpl.name', { 'param' => 'value' } ]       # template text where %param%
 =end
 
 require 'ream/template/re'
+require 'ream/template/hash_builder'
 
 #
 module Ream
   #
   module Template
-
     #
     #
     #
@@ -82,21 +82,23 @@ module Ream
       #
       #
       def scan( path )
-        @items = Items.new
+        @items = HashBuilder.new
+
         IO.read( path ).each_line do |line|
           @line = line.chomp
           scan_line
         end
-        @items.items
+
+        @items.to_hash
       end
       
       #
       #
       def scan_line
-        if title?    then @items.add_item( @title )
-        elsif close? then @items.close_item
+        if title?    then @items.open( @title )
+        elsif close? then @items.close!
         elsif comment? # skip line
-        else              @items.add_line( strip_start )
+        else              @items << strip_start
         end
       end
       
@@ -112,37 +114,6 @@ module Ream
       
       #
       def strip_start; @line.sub( /^~/, '' ); end
-    end
-
-    #
-    #
-    #
-    class Items
-      #
-      def initialize
-        @items = {}
-        @last_item = nil
-      end
-      
-      attr_reader :items
-      
-      #
-      def add_item( name )
-        @last_item = String.new
-        @items[ name ] = @last_item
-      end
-      
-      #
-      def close_item
-        @last_item = nil
-      end
-      
-      #
-      def add_line( line )
-        return unless @last_item
-        @last_item << $/ unless @last_item.empty?
-        @last_item << line
-      end
     end
     
     #
@@ -167,6 +138,3 @@ module Ream
     end
   end
 end
-
-
-

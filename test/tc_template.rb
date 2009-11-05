@@ -2,6 +2,8 @@
 #
 #
 
+$:.unshift( "../lib" )
+
 require 'test/unit'
 require 'ream/template'
 

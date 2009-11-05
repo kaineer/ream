@@ -1,3 +1,7 @@
+2009-11-05
+  * Started to move old blog code to github
+  * Moved template class
+  * Started to move template tests onto cucumber
 2009-10-20
   * Added tests and behavour for xml (all quoted, empty-slashed tags)
     and unquote (no quotes around all-digits, all-letters attribute values) modes.
