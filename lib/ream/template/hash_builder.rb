@@ -10,14 +10,21 @@ module Ream
         @items
       end
 
-      def add_key( key )
+      def open( key )
         @items[ key ] = ( @current_item = String.new )
+      end
+
+      def close!
+        @current_item = nil
       end
       
       def <<( string )
-        return unless @current_item
-        @current_item << $/ unless @current_item.empty?
-        @current_item << string
+        if @current_item
+          unless @current_item.empty?
+            @current_item << $/
+          end
+          @current_item << string
+        end
       end
     end
   end
