@@ -23,21 +23,12 @@ tpl[ 'tpl.name', { 'param' => 'value' } ]       # template text where %param%
 ---
 =end
 
+require 'ream/template/re'
+
 #
 module Ream
   #
   module Template
-
-    #
-    module RE
-=begin
-      # quick, but wrong
-      def self.expand_includes; /\{([\w.:]+)\}/; end
-      def self.expand_params; /%([\w.:]+)%/; end
-=end
-      def self.expand_includes; /\{([\w]+([.:][\w]+)*)\}/; end
-      def self.expand_params; /%([\w.:]+)%/; end
-    end
 
     #
     #

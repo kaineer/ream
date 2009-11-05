@@ -3,9 +3,10 @@ require 'yaml'
 
 World( Test::Unit::Assertions )
 
+# preferring to test what in lib dir
+$:.unshift( "../../lib" )
 
 # CubeText
-
 require 'cubetext'
 
 class String
