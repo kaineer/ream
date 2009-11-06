@@ -32,13 +32,25 @@ require 'ream/template/scanner'
 module Ream
   #
   module Template
+    #-----------------------------------------------------------
+    # SourceString --> CallerPath 
     #
-    #
+    # SourceString = CallerPath ':'
+    # CallerPath = WindowCallerPath | UnixCallerPath
+    # UnixCallerPath = PathToFile
+    # WindowCallerPath = [a-z]: PathToFile
+    #-----------------------------------------------------------
+    def self.extract_caller_path( caller_string )
+      File.expand_path(
+        caller_string[ /^(([a-z]:)?([^:]+)):/i, 1 ]
+      )
+    end
+
     def self.scan( *args )
       scanner = Scanner.new
       
       paths = args.empty? ? 
-        [ File.expand_path( caller[ 0 ][ /^(([a-z]:)?([^:]+)):/i, 1 ] ) ] : args
+        [ extract_caller_path( caller[ 0 ] ) ] : args
 
       items = {}
       paths.each do |path|
@@ -47,8 +59,6 @@ module Ream
       expand( items )
     end
 
-    #
-    #
     def self.expand( items )
       Replacer.new( items )
     end

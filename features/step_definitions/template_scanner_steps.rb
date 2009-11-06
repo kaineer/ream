@@ -1,9 +1,5 @@
 Given /^I have a source:$/ do |table|
-  @source = []
-
-  table.raw.flatten.each do |line|
-    @source << line.chomp
-  end
+  @source = table.raw.flatten
 end
 
 When /^scanner scans a source$/ do
