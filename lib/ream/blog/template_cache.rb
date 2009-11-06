@@ -36,7 +36,7 @@ module Ream
       def fetch( *names )
         result = @call_cache[ names ]
         unless result
-        result = {}
+          result = {}
           names.each do |name|
             case name
             when Array  then result.merge!( fetch( *name ) )
