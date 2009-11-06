@@ -56,8 +56,12 @@ module Ream
       end
 
       #
+      def scanner
+        @scanner ||= Ream::Template::Scanner.new
+      end
+
+      #
       def scan_from_sources
-        scanner = Ream::Template::Scanner.new
         @scan_sources.each do |key, value|
           @cache[ key ] = scanner.scan( value.split( $/ ) )
         end
@@ -65,7 +69,6 @@ module Ream
 
       #
       def scan_from_filesystem
-        scanner = Ream::Template::Scanner.new
         Dir.chdir( @root_dir ) do
           @scan_masks.each do |mask|
             Dir[ mask ].each do |filename|
