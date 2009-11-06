@@ -1,6 +1,7 @@
 2009-11-06
   * Moved class Replacer (former Expand) into separate file
   * Added tests for Replacer
+  * Moved class Scanner into separate file, with tests and some refactoring
 2009-11-05
   * Started to move old blog code to github
   * Moved template class
