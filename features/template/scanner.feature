@@ -7,7 +7,9 @@ Scenario: Scanning a source
   Given I have a source:
     | --- first.template  |
     | foo                 |
+    | # here comment too  |
     | --- second.template |
+    | # comment           |
     | bar                 |
     | ---                 |
   When scanner scans a source
