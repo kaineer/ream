@@ -2,7 +2,11 @@ require 'cucumber/rake/task'
 
 Cucumber::Rake::Task.new( "features" ) do |t|
   t.cucumber_opts ||= ""
-  t.cucumber_opts = "--tags #{ENV[ "CUCUMBER_TAGS" ]}" if ENV[ "CUCUMBER_TAGS" ]
+  if ENV[ "CUCUMBER_TAGS" ]
+    tags = ENV[ "CUCUMBER_TAGS" ]
+    tag_array = tags.split( 32.chr )
+    t.cucumber_opts = tag_array.map{|s|"--tags #{s}"} * 32.chr
+  end
   t.cucumber_opts << " #{ENV[ "CUCUMBER_OPTS" ]}" if ENV[ "CUCUMBER_OPTS" ]
 end
 
