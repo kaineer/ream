@@ -25,56 +25,12 @@ tpl[ 'tpl.name', { 'param' => 'value' } ]       # template text where %param%
 
 require 'ream/template/re'
 require 'ream/template/hash_builder'
+require 'ream/template/replacer'
 
 #
 module Ream
   #
   module Template
-    #
-    #
-    #
-    class Expand
-      #
-      #
-      def initialize( items )
-        @items = items
-      end
-      
-      #
-      #
-      def []( name, params = {} )
-        expand( name, params )
-      end
-      
-      #
-      #
-      def has_template?( name )
-        @items.has_key?( name )
-      end
-      
-    protected
-      #
-      def expand( name, params )
-        return unknown_template( name ) unless has_template?( name )
-        expand_params( expand_includes( @items[ name ], params ), params )
-      end
-    
-      #
-      def expand_includes( text, params )
-        text.gsub( RE.expand_includes ) { || expand( $~[1], params ) }
-      end
- 
-      #
-      def expand_params( text, params )
-        text.gsub( RE.expand_params ) { |f| params.has_key?( $~[1] ) ? params[ $~[1] ] : f }
-      end
-      
-      #
-      def unknown_template( name )
-        "\{#{name}\}"
-      end
-    end
-
     # 
     #
     #
@@ -134,7 +90,7 @@ module Ream
     #
     #
     def self.expand( items )
-      Expand.new( items )
+      Replacer.new( items )
     end
   end
 end
