@@ -1,25 +1,27 @@
-# * hash - hash in format { "url1" => "http://domain.com/foo/bar", ... }
+#==============================================================
+# module: Ream::Sources::Url
+#   date: 2009.11.08
 #
-#
+#  brief: Loading sources data from urls
+#==============================================================
 
-require 'net/http'
+require 'open-uri'
 
 module Ream
   module Sources
     class Url
+      # hash in format "key" => "http://some.url"
+      #
       def initialize( hash )
         @hash = hash
+        @cache = {}
       end
 
       def each( &block )
         @hash.each do |key, url|
-          value = get_url_data( url )
-          block.call( key, value )
+          value = ( @cache[ key ] ||= open( url ).read )
+          block.call( key.to_s, value )
         end
-      end
-
-      def get_url_data( url )
-        # TODO: get by http
       end
     end
   end

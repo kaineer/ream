@@ -1,12 +1,17 @@
-# FS - filesystem sources
-#   May be used for getting text from files in filesystem
-#   * root_dir
-#   * masks - several masks to get content from
-#   * block - block to transform filename into key
+#==============================================================
+# module: Ream::Sources::FS
+#   date: 2009.11.08
+#
+#  brief: Loading sources data from files
+#==============================================================
 
 module Ream
   module Sources
     class FS
+      #   May be used for getting text from files in filesystem
+      #   * root_dir
+      #   * masks - several masks to get content from
+      #   * block - block to transform filename into key
       def initialize( root_dir = ".", masks = [ "**/*.tpl" ], &block )
         @root_dir = File.expand_path( root_dir )
         @masks    = masks
