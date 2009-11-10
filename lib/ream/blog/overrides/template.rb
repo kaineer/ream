@@ -10,9 +10,9 @@ module Ream
       def self.expand_params; /%([-\w.\(,\)]+)%/; end
     end
     
-    class Expand
+    class Replacer
       def with( processor )
-        Expand.new( 
+        Replacer.new( 
           @items.inject( {} ) do |hash, pair|
             new_key_value = processor.process_key_value( *pair )
             hash.merge( new_key_value )
