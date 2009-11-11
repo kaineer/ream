@@ -5,19 +5,6 @@
 #
 #===============================================================
 
-=begin
-\ - HOME_ROOT
-:-\ - scripts      # for generating processors, templates and pages, and building of www
-:-\ - config
-: :-\ - processors # template processors (.rb)
-: :-\ - templates  # design templates (.tpl)
-:-\ - public
-: :-\ - images
-: :-\ - stylesheets
-: :-\ - javascripts
-:-\ - pages        # here and lower - page structure (.)
-:-\ - www          # to keep build results
-=end
 
 module Ream
   #

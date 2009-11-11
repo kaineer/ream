@@ -14,6 +14,8 @@ Feature: Romaji parser
    | shogun  | SHI yo GU N     | sho -> SHI yo                   |
    | shi     | SHI             | shi example                     |
    | daijobu | DA I JI yo BU   | jo -> JI yo                     |
+   | aji     | A JI            | a ji                            |
+   | azi     | A JI            | a zi                            |
    | dorobou | DO RO BO U      | long vowel                      |
    | dorobo: | DO RO BO U      | same case, semicolon used       |
    | foruku  | FU o RU KU      | katakana 'fork'                 |

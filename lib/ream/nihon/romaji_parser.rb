@@ -176,6 +176,10 @@ module Ream
         pr << 'JI' << 'y' + pr[1,1].downcase >> 2
       }
 
+      rule( /^JI/ ) {|pr|
+        pr << 'JI' >> 2
+      }
+
       # --- fi --> FU+i
       rule( /^F[AIEO]/ ) {|pr|
         pr << 'FU' << pr[ 1, 1 ].downcase >> 2
@@ -189,6 +193,11 @@ module Ream
       # C included for 'cchi'
       rule( /^(TC|([CKGSZTDHBPMR])\2)/ ) {|pr|
         pr << 'tsu' >> 1
+      }
+
+      # --- one more exception
+      rule( /^ZI/ ) {|pr|
+        pr << 'JI' >> 2
       }
 
       # --- all the rest
