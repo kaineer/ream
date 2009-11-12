@@ -4,13 +4,16 @@
 
 require 'ream/template'
 
+require File.join( File.dirname( __FILE__ ), "template_processor" )
+require File.join( File.dirname( __FILE__ ), "overrides" )
+
 module Ream
   module Blog
     class TemplateCache
       def initialize( source )
         @source = source
         init_cache
-        scan_source
+        scan_sources
       end
 
       def rescan
@@ -32,9 +35,9 @@ module Ream
         @scanner ||= Ream::Template::Scanner.new
       end
 
-      def scan_source
+      def scan_sources
         @source.each do |key, value|
-          @cache[ key ] = value
+          @cache[ key ] = scanner.scan( value )
         end
       end
 
@@ -43,7 +46,7 @@ module Ream
           hash.merge( fetch_by_name( name ) )
         end
         
-        Ream::Template.expand( items )
+        Ream::Template.expand( items ).with( Ream::Blog::TemplateProcessor )
       end
 
       def fetch_by_name( name )
