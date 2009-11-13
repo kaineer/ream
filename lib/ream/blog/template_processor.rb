@@ -14,8 +14,12 @@ module Ream
       
       def self.register( *classes )
         classes.each do |klazz|
-          @@register[ klazz.name.downcase.gsub( /\:\:/, "_" ) ] = klazz
+          @@register[ class_name_to_key( klazz.name ) ] = klazz
         end
+      end
+
+      def class_name_to_key( class_name )
+        class_name.downcase.split( "::" )[ 1..-1 ] * "_"
       end
       
       def self.[]( key ); @@register[ key ]; end
