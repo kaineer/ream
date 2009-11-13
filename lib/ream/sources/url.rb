@@ -17,6 +17,10 @@ module Ream
         @cache = {}
       end
 
+      def keys
+        @hash.keys
+      end
+
       def each( &block )
         @hash.each do |key, url|
           value = ( @cache[ key ] ||= open( url ).read )

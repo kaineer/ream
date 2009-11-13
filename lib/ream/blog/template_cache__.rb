@@ -15,6 +15,8 @@ module Ream
         init_cache
         scan_sources
       end
+      
+      attr_reader :source
 
       def rescan
         scan_sources
@@ -22,6 +24,18 @@ module Ream
 
       def fetch( *names )
         @call_cache[ names ] ||= fetch0( *names )
+      end
+
+      def each( &block )
+        @source.keys.each do |key|
+          value = fetch( key )
+          block.call( key, value )
+        end
+      end
+
+      def files
+        return [] unless @source.is_a?( Ream::Sources::FS )
+        @source.files
       end
 
     protected

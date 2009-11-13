@@ -19,9 +19,11 @@ module Ream
       # TemplatePlaceHolder ::= { PlaceHolderName }
       #
       # ParameterPlaceHolder ::= % PlaceHolderName %
+      # {green:cheese}
+      # %green:cheese%
       #--------------------------------------------------------
       def self.expand_includes; /\{(\w+([.:]\w+)*)\}/; end
-      def self.expand_params; /%(\w+([.:]\w+)*)%/; end
+      def self.expand_params;    /%(\w+([.:]\w+)*)%/; end
     end
   end
 end

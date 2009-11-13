@@ -42,3 +42,4 @@ Feature: Template engine extending regexps
     | %foo:bar%          | foo:bar          |
     | %foo.bar%          | foo.bar          |
     | %prot:name.suffix% | prot:name.suffix |
+    | before %a:b% after | a:b              |

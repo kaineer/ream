@@ -17,13 +17,27 @@ module Ream
         @masks    = masks
         @block    = proc( &block ) if block_given?
       end
+
+      def files
+        @files ||= Dir.chdir( @root_dir ) do
+          @masks.inject( [] ) do |files, mask|
+            files + Dir[ mask ]
+          end
+        end
+      end
+
+      def keys
+        @keys ||= Dir.chdir( @root_dir ) do
+          files.map{|filename| get_key( filename )}
+        end
+      end
       
       def each( &block )
         Dir.chdir( @root_dir ) do
           @masks.each do |mask|
             Dir[ mask ].each do |filename|
               key = get_key( filename )
-              block.call( filename, IO.read( filename ) )
+              block.call( key, IO.read( filename ) )
             end
           end
         end

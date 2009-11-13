@@ -24,6 +24,7 @@ module Ream
 
       def expand_template( name, params )
         return unknown_template( name ) unless has_template?( name )
+        return @items[ name ] unless @items[ name ].is_a?( String )
         expand_params( expand_includes( @items[ name ], params ), params )
       end
 
@@ -36,9 +37,17 @@ module Ream
 
       # Replace parameters placeholders
       def expand_params( text, params )
+puts "Expanding text: #{text}"
+puts "with params: #{params.to_yaml}"
         text.gsub( RE.expand_params ) { |f| 
           name = $~[1]
-          params.has_key?( name ) ? params[ name ] : f
+puts "Expanding: #{name}"
+          if params.has_key?( name ) 
+            params[ name ] 
+          else
+            puts "--- params #{name} not found ---"
+            f
+          end
         }
       end
 
