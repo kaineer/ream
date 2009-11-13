@@ -23,7 +23,8 @@ module Ream
       end
 
       def fetch( *names )
-        @call_cache[ names ] ||= fetch0( *names )
+        @call_cache[ names ] ||= 
+          Ream::Template.expand( fetch0( *names ) ).with( Ream::Blog::TemplateProcessor )
       end
 
       def each( &block )
@@ -56,16 +57,17 @@ module Ream
       end
 
       def fetch0( *names )
-        items = names.inject( {} ) do |hash, name|
+        names.inject( {} ) do |hash, name|
           hash.merge( fetch_by_name( name ) )
         end
-        
-        Ream::Template.expand( items ).with( Ream::Blog::TemplateProcessor )
       end
+
+        
+        
 
       def fetch_by_name( name )
         case name
-        when Array  then fetch( *name )
+        when Array  then fetch0( *name )
         when String then ( @cache[ name ] || {} )
         when Hash   then name
         else raise unknown_argument( name )

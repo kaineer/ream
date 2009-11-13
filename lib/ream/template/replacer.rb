@@ -37,11 +37,8 @@ module Ream
 
       # Replace parameters placeholders
       def expand_params( text, params )
-puts "Expanding text: #{text}"
-puts "with params: #{params.to_yaml}"
         text.gsub( RE.expand_params ) { |f| 
           name = $~[1]
-puts "Expanding: #{name}"
           if params.has_key?( name ) 
             params[ name ] 
           else

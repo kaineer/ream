@@ -8,7 +8,7 @@ module Ream
   module Template
     module RE
       # So, we can use parameters like %navigation.following(16)%
-      def self.expand_params; /%([-\w.\(,\)]+)%/; end
+      def self.expand_params; /%([-\w.:\(,\)]+)%/; end
     end
     
     class Replacer
