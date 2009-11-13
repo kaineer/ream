@@ -18,7 +18,7 @@ module Ream
         end
       end
 
-      def class_name_to_key( class_name )
+      def self.class_name_to_key( class_name )
         class_name.downcase.split( "::" )[ 1..-1 ] * "_"
       end
       
