@@ -23,11 +23,14 @@ module Ream
       def scan( string )
         @all = string
         if /^(.*)?[\/\\]([^\/\\]*)$/ === string
-          @path = $~[1]
+          @path = $~[1].to_s
           @base = $~[2]
-
-          scan_name_extension
+        else
+          @path = "."
+          @base = string
         end
+
+        scan_name_extension
       end
 
       def scan_name_extension
