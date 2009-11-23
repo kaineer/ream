@@ -37,7 +37,7 @@ module Ream
           @masks.each do |mask|
             Dir[ mask ].each do |filename|
               key = get_key( filename )
-              block.call( key, IO.read( filename ) )
+              block.call( key, IO.read( filename ), File.mtime( filename ) )
             end
           end
         end

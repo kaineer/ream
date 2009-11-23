@@ -20,6 +20,8 @@ module Ream
           end
         )
       end
+      
+      attr_accessor :mtime
     end
   end
 end
