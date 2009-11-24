@@ -1,4 +1,8 @@
 #
+
+
+require 'ream/blog/configuration'
+
 module Ream
   module Blog
     class TemplateProcessor
@@ -11,6 +15,15 @@ module Ream
       #
       def self.reset
         @@register.clear
+      end
+
+      #
+      #
+      def self.load( path = Ream::Blog::Configuration.processors, &callback )
+        Dir[ path ].each do |filename|
+          callback.call( filename ) if block_given?
+          require filename
+        end
       end
       
       # Register new inherited class

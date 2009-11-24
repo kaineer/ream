@@ -17,6 +17,7 @@ module Ream
       def self.sources; "config/sources.tpl"; end
       def self.transformations; "config/transformations.tpl"; end
       def self.processors; "config/processors/**/*.rb"; end
+      def self.parameters; "config/parameters/**/*.rb"; end
 
       #
       #

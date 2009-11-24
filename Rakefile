@@ -1,4 +1,15 @@
+# -*- ruby -*-
+
+require 'rubygems'
+require 'hoe'
+require './lib/ream.rb'
+
 require 'cucumber/rake/task'
+
+
+Hoe.new('ream', Ream::VERSION) do |p|
+ p.developer('kaineer', 'kaineer@gmail.com')
+end
 
 Cucumber::Rake::Task.new( "features" ) do |t|
   t.cucumber_opts ||= ""
@@ -11,3 +22,5 @@ Cucumber::Rake::Task.new( "features" ) do |t|
 end
 
 task :default => :features
+
+# vim: syntax=Ruby
