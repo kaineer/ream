@@ -1,5 +1,6 @@
 require 'test/unit'
 require 'yaml'
+require 'mocha'
 
 World( Test::Unit::Assertions )
 

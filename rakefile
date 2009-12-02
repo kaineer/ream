@@ -1,5 +1,7 @@
 require 'cucumber/rake/task'
 
+$:.unshift( "lib" )
+
 Cucumber::Rake::Task.new( "features" ) do |t|
   t.cucumber_opts ||= ""
   if ENV[ "CUCUMBER_TAGS" ]

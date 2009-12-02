@@ -1,5 +1,3 @@
-
-
 =begin
 \ - HOME_ROOT
 :-\ - scripts      # for generating processors, templates and pages, and building of www
@@ -17,14 +15,13 @@
 Page is a file with
   * Page hierarchy (breadcrumb)
   * Page environment (parameters for replacing %placeholders%)
+--- yaml:parametrs
+title: This page title
+date: 2009.XX.XX              - when page was created
 --- yaml:environment
-params:
-  title: This page title
-  content: @html:page       - Name of template for replacing %content% parameter
+tags: [work, ruby, bdd]
+templates: [empty]            - templates to build page with
 ---
-
-
-
 
 
 =end

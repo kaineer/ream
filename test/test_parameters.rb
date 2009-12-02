@@ -1,3 +1,4 @@
+
 require File.join( File.dirname( __FILE__ ), "blog_suite" )
 
 class BlogParametersTest < Test::Unit::TestCase
