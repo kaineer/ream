@@ -23,8 +23,12 @@ module Ream
       end
 
       def fetch( *names )
-        @call_cache[ names ] ||= 
-          Ream::Template.expand( fetch0( *names ) ).with( Ream::Blog::TemplateProcessor )
+        unless @call_cache[ names ]
+          @call_cache[ names ] = Ream::Template.expand( fetch0( *names ) ).with( Ream::Blog::TemplateProcessor )
+          @call_cache[ names ].mtime = fetch_mtime( *names )
+        end
+
+        @call_cache[ names ]
       end
 
       def each( &block )
@@ -43,6 +47,7 @@ module Ream
 
       def init_cache
         @cache = {}
+        @time_cache = {}
         @call_cache = {}
       end
 
@@ -51,7 +56,8 @@ module Ream
       end
 
       def scan_sources
-        @source.each do |key, value|
+        @source.each do |key, value, time|
+          @time_cache[ key ] = ( time || Time.now )
           @cache[ key ] = scanner.scan( value )
         end
       end
@@ -62,8 +68,11 @@ module Ream
         end
       end
 
-        
-        
+      def fetch_mtime( *names )
+        names.inject( Time.mktime( 1980, 1, 1 ) ) do |time, name|
+          [ time, fetch_mtime_by_name( name ) ].max
+        end
+      end
 
       def fetch_by_name( name )
         case name
@@ -71,6 +80,14 @@ module Ream
         when String then ( @cache[ name ] || {} )
         when Hash   then name
         else raise unknown_argument( name )
+        end
+      end
+
+      def fetch_mtime_by_name( name )
+        case name
+        when Array  then fetch_mtime( *name )
+        when String then ( @time_cache[ name ] || Time.now )
+        else Time.now
         end
       end
 
