@@ -38,4 +38,5 @@ lib/ream/nihon/kana.rb
 lib/ream/nihon/romaji_parser.rb
 lib/ream/nihon/symbols.rb
 lib/ream/nihon/text.rb
-
+lib/ream/shell.rb
+lib/ream/shell/interactor.rb
